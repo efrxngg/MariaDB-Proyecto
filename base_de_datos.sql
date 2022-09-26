@@ -264,7 +264,7 @@ create or replace table unidad_producto_auditoria(
 );
 
 
--- GIANPIER
+-- GIAPIERRE
 
 
 drop table if exists area_almacenado_auditoria;
