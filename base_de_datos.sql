@@ -127,7 +127,6 @@ create or replace table det_pedido(
 	id_det_pedido int not null auto_increment,
 	fk_cab_pedido int not null,
 	fk_producto int not null,
-	cantidad int not null,
 	estado int not null,
 	constraint fk_cab_pedido_det_pedido foreign key(fk_cab_pedido)
 	references cab_pedido(id_cab_pedido),
@@ -156,6 +155,7 @@ create or replace table det_factura(
 	id_det_factura int not null auto_increment,
 	fk_cab_factura int not null,
 	fk_producto int not null,
+	cantidad int not null,
     total decimal(10, 2),
     estado int not null,
 	constraint fk_cab_factura_det_factura foreign key(fk_cab_factura) 
@@ -188,6 +188,7 @@ create or replace table det_factura_auditoria(
 	id_det_factura int not null,
 	fk_cb_factura int not null,
 	fk_producto int not null,
+	cantidad int not null,
 	total decimal(10, 2) not null,
 	estado int not null,
 	accion varchar(250) not null,
@@ -203,7 +204,6 @@ create or replace table det_pedido_auditoria(
 	id_det_pedido int not null,
 	fk_cb_factura int not null,
 	fk_producto int not null,
-	cantidad int not null,
 	estado int not null,
 	accion varchar(250) not null,
 	usuario varchar(250) not null,
