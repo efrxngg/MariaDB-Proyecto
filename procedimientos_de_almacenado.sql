@@ -15,3 +15,13 @@ begin
 end
 
 call update_cliente(1,'9874058392', 'Efren Galarza', '0963849581', 1);
+
+
+drop procedure if exists delete_cliente;
+create or replace procedure delete_cliente(in id_cliente int)
+begin 
+	update cliente set estado = 0 where id_cliente=id_cliente; 
+end
+
+call delete_cliente(1)
+

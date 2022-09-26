@@ -175,6 +175,7 @@ create or replace table cliente_auditoria(
 	nombre varchar(50) not null,
 	contacto varchar(50) not null,
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_cliente_auditoria)
@@ -189,6 +190,7 @@ create or replace table det_factura_auditoria(
 	fk_producto int not null,
 	total decimal(10, 2) not null,
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_det_factura_auditoria)
@@ -203,6 +205,7 @@ create or replace table det_pedido_auditoria(
 	fk_producto int not null,
 	cantidad int not null,
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_det_pedido_auditoria)
@@ -217,6 +220,7 @@ create or replace table precio_catalogo_producto_auditoria(
 	fk_unid_prod int not null,
 	precio decimal(12, 2) not null,
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_prec_cata_prod_auditoria)
@@ -232,6 +236,7 @@ create or replace table presentacion_catalogo_producto_auditoria(
 	cantidad int not null,
 	fk_unid_prod int not null,
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_pres_cata_prod_auditoria)
@@ -245,6 +250,7 @@ create or replace table sub_categoria_auditoria(
 	fk_categoria int not null,
 	descripcion varchar(255),
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_sub_cate_auditoria)
@@ -258,6 +264,7 @@ create or replace table unidad_producto_auditoria(
 	sigla int not null,
 	descripcion varchar(255),
 	estado int not null,
+	accion varchar(50)not null,
 	usuario varchar(250) not null,
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_unid_prod_auditoria)
