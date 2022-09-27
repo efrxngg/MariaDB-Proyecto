@@ -354,6 +354,3 @@ create or replace table categoria_auditoria(
 	fecha_modificacion datetime default current_timestamp,
 	primary key(id_categoria_auditoria)
 );
-
-
-

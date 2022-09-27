@@ -93,31 +93,30 @@ call delete_cabecera_pedido(1);
  * Argumentos: id_cab_pedido, id_producto, cantidad
  */
 drop procedure if exists insert_detalle_pedido;
-create or replace procedure insert_detalle_pedido (in fk_cab_pedido int, fk_producto int, cantidad int)
+create or replace procedure insert_detalle_pedido (in fk_cab_pedido int, fk_producto int)
 begin
-	insert into det_pedido (fk_cab_pedido, fk_producto, cantidad, estado) values(fk_cab_pedido, fk_producto, cantidad);
+	insert into det_pedido (fk_cab_pedido, fk_producto, estado) values(fk_cab_pedido, fk_producto, 1);
 end
 -- Ejemplo:
-call insert_detalle_pedido(1, 1, 6);
+call insert_detalle_pedido(1, 1);
 
-/**
+/**PENDIENTE
  * Tabla: det_pedido
  * Funcion: actualiza datos
  * Argumentos: id_cab_pedido, id_producto, cantidad, id_det_pedido
  */
 drop procedure if exists update_detalle_pedido;
-create or replace procedure update_detalle_pedido (in fk_cab_pedido int, fk_producto int, cantidad int, id_det_pedido int)
+create or replace procedure update_detalle_pedido (in fk_cab_pedido int, fk_producto int, id_det_pedid int)
 begin
 	update det_pedido set 
 		fk_cab_pedido=fk_cab_pedido, 
-		fk_producto=fk_producto, 
-		cantidad=cantidad
-	where id_det_pedido=id_det_pedido ;
+		fk_producto=fk_producto 
+	where id_det_pedido=id_det_pedid ;
 end
 -- Ejemplo:
-call update_detalle_pedido(1, 1, 6, 1);
+call update_detalle_pedido(1, 1, 1);
 
-/**
+/** 
  * Tabla: det_pedido
  * Funcion: actualiza datos
  * Argumentos: id_det_pedido
@@ -133,9 +132,48 @@ call delete_detalle_pedido(1);
 
 -- Cabecera Factura ==================================================================
 drop procedure if exists insert_cabecera_factura;
-create or replace procedure insert_cabecera_factura (in fk_cab_pedido int, sub_total  decimal(12, 2), total  decimal(12, 2))
+create or replace procedure insert_cabecera_factura (in fk_cab_pedido int)
 begin
-	insert into cab_factura(fk_cab_pedido, sub_total, total, estado) values (fk_cab_pedido, sub_total, total, 1);
+	insert into cab_factura(fk_cab_pedido, sub_total, total, estado) values (fk_cab_pedido, 0, 0, 1);
 end
 
-call insert_cabecera_factura('9874058392','Jimmy Arriaga','0963849581');
+call insert_cabecera_factura(1);
+
+
+drop procedure if exists update_cabecera_factura;
+create or replace procedure update_cabecera_factura (in fk_cab_pedido int, sub_total  decimal(12, 2), total  decimal(12, 2), id_cab_factura int)
+begin
+	update cab_factura set 
+		fk_cab_pedido=fk_cab_pedido , 
+		sub_total=sub_total, 
+		total=total 
+	where id_cab_factura = id_cab_factura ;
+end
+
+call update_cabecera_factura(1, 10, 10, 1);
+
+
+drop procedure if exists delete_cabecera_factura;
+create or replace procedure delete_cabecera_factura (in id_cab_factura int)
+begin
+	update cab_factura set 
+		estado = 0
+	where id_cab_factura = id_cab_factura ;
+end
+
+call delete_cabecera_factura(1);
+
+
+-- DETALLE FACTURA ==================================================================
+drop procedure if exists insert_detalle_factura;
+create or replace procedure insert_detalle_factura (in fk_cab_factura int, fk_producto int, cantidad int, total decimal(12, 2))
+begin
+	insert into det_factura(fk_cab_factura, fk_producto, cantidad, total, estado) 
+	values (fk_cab_factura, fk_producto, cantidad, total, 1);
+end
+
+call insert_detalle_factura(1, 1, 2, 1);
+
+
+
+
