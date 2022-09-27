@@ -45,28 +45,50 @@ select * from precio_catalogo_producto;
 
 -- CLIENTE 
 call insert_cliente('0954943114','Efren Galarza','0997188086');
+call insert_cliente('0954943116','Perro Negro','0997188087');
+call insert_cliente('0954943118','Giapierre Novillo','0997188089');
 select * from cliente;
 
 
 -- CABECERA PEDIDO
 call insert_cabecera_pedido(1);
+call insert_cabecera_pedido(2);
+call insert_cabecera_pedido(3);
 select * from cab_pedido;
 
 
--- DETALLE PEDIDO
+-- DETALLE PEDIDO : id_cab_pedido, id_producto
 call insert_detalle_pedido(1, 1);
 call insert_detalle_pedido(1, 2);
 call insert_detalle_pedido(1, 3);
+call insert_detalle_pedido(1, 1);
+call insert_detalle_pedido(1, 4);
+
+call insert_detalle_pedido(2, 1);
+call insert_detalle_pedido(2, 1);
+call insert_detalle_pedido(2, 3);
+
+call insert_detalle_pedido(3, 1);
+call insert_detalle_pedido(3, 2);
+call insert_detalle_pedido(3, 3);
+call insert_detalle_pedido(3, 3);
+
+
 select * from det_pedido;
 
 
 -- CABECERA FACTURA
 call insert_cabecera_factura(1);
+call insert_cabecera_factura(2);
+call insert_cabecera_factura(3);
 select * from cab_factura;
 
 
 -- DETALLE FACTURA
-call insert_detalles_factura();
+call insert_detalles_factura(1);
+call insert_detalles_factura(2);
+call insert_detalles_factura(3);
+call insert_detalle_factura(3, 1, 2, 1);
+
 select * from det_factura df ;
-
-
+truncate table  det_factura;

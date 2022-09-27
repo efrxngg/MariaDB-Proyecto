@@ -248,7 +248,7 @@ call delete_cabecera_pedido(1);
 /**
  * Tabla: det_pedido
  * Funcion: Inserta registros
- * Argumentos: id_cab_pedido, id_producto, cantidad
+ * Argumentos: id_cab_pedido, id_producto
  */
 drop procedure if exists insert_detalle_pedido;
 create or replace procedure insert_detalle_pedido (in fk_cab_pedido int, fk_producto int)
@@ -335,20 +335,21 @@ call insert_detalle_factura(1, 1, 2, 1);
 
 -- PENDIENTE
 drop procedure if exists insert_detalles_factura;
-create or replace procedure insert_detalles_factura()
+create or replace procedure insert_detalles_factura(in id_cab_factura int)
 begin
 	declare var_producto integer;
 	declare var_cantidad integer;
 	declare var_total decimal(12,2);
 	declare var_final integer default 0;
-
+	declare var_id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factura);
+	
 	declare detalles_pedido cursor for 
 		select     
 			dp.fk_producto  as producto , 
 			count (dp.fk_producto) as cantidad,  
 			(count (dp.fk_producto)* pcp.precio ) as total 
 		from det_pedido as dp
-			inner join precio_catalogo_producto as pcp on dp.fk_producto = pcp.id_prec_cata_prod  where dp.fk_cab_pedido = 1
+			inner join precio_catalogo_producto as pcp on dp.fk_producto = pcp.id_prec_cata_prod  where dp.fk_cab_pedido = var_id_cab_pedido
 			group by dp.fk_producto;
 	
 	declare continue handler for not found set var_final = 1;
@@ -360,7 +361,7 @@ begin
 					leave bucle;			
 				end if;		
 			
-				call insert_detalle_factura (1, var_producto, var_cantidad, var_total);
+				call insert_detalle_factura (id_cab_factura, var_producto, var_cantidad, var_total);
 			
 		end loop bucle;
 	close detalles_pedido;
