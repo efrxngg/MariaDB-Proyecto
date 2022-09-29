@@ -323,17 +323,24 @@ call delete_cabecera_factura(1);
 
 
 -- DETALLE FACTURA ==================================================
+/* Tabla: det_factura
+ * Funcion: insertar producto a una factura
+ * Parametros: id_cab_factura, id_producto, cantidad, total
+ */
 drop procedure if exists insert_detalle_factura;
 create or replace procedure insert_detalle_factura (in fk_cab_factura int, fk_producto int, cantidad int, total decimal(12, 2))
 begin
 	insert into det_factura(fk_cab_factura, fk_producto, cantidad, total, estado) 
 	values (fk_cab_factura, fk_producto, cantidad, total, 1);
 end
-
+-- Ejemplo
 call insert_detalle_factura(1, 1, 2, 1);
 
 
--- PENDIENTE
+/* Tabla: det_factura
+ * Funcion: insertar los productos a una factura
+ * Parametros: id_cab_factura
+ */
 drop procedure if exists insert_detalles_factura;
 create or replace procedure insert_detalles_factura(in id_cab_factura int)
 begin
@@ -370,11 +377,19 @@ end
 call insert_detalles_factura();
 
 
+drop procedure if exists update_detalle_factura;
+create or replace procedure update_detalle_factura(in id_cab_factura int, id_producto int, var_cantidad int, var_total decimal(12, 2))
+begin 
+	update det_factura set cantidad=var_cantidad, total=var_total where fk_cab_factura = id_cab_factura and fk_producto =  id_producto;
+end
+
+
+
 drop procedure if exists delete_detalle_factura;
 create or replace procedure delete_detalle_factura(in id_det_factura int)
 begin
 	update det_factura set estado=0 where id_det_factura = id_det_factura ;
 end
 
-
+-- Ejemplo: 
 call delete_detalle_factura(1);

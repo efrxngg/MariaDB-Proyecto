@@ -63,6 +63,7 @@ call insert_detalle_pedido(1, 2);
 call insert_detalle_pedido(1, 3);
 call insert_detalle_pedido(1, 1);
 call insert_detalle_pedido(1, 4);
+call insert_detalle_pedido(1, 5);
 
 call insert_detalle_pedido(2, 1);
 call insert_detalle_pedido(2, 1);
