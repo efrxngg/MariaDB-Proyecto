@@ -114,49 +114,178 @@ select*from unidad_producto
 
 -- END ANGIE
 
-
+-- START ERICK
 -- CATALOGO PRODUCTO ==================================================
+#insert
+drop procedure if exists insert_catalogo_producto;
+create or replace procedure insert_catalogo_producto(descripcion varchar(50))
+begin
+	insert into catalogo_producto(descripcion, estado) values (descripcion, 1);
+end
+call insert_catalogo_producto("Saritas")
+select *from catalogo_producto;
 
+#update
+drop procedure if exists update_catalogo_producto;
+create or replace procedure update_catalogo_producto ( in id_cata_product int(11), descripcion varchar(50))
+begin 
+	update catalogo_producto  set descripcion = descripcion where id_cata_prod  = id_cata_product;
+end
+call update_catalogo_producto(15,"Ronditos")
+
+#delete
+drop procedure if exists delete_catalogo_producto;
+create or replace procedure delete_catalogo_producto ( in id_cata_pro int)
+begin 
+	update catalogo_producto set estado=0 where id_cata_prod=id_cata_pro;
+end
+call delete_catalogo_producto (3)
+
+#select
+drop procedure if exists select_catalogo_producto;
+create procedure select_catalogo_producto(id_cata_pro int)
+begin
+select * from catalogo_producto where id_cata_prod  = id_cata_pro;
+end
+call select_catalogo_producto (1)
 
 -- AREA ALMACENADO ==================================================
+#insert
+drop procedure if exists insert_area_almacenado;
+create or replace procedure insert_area_almacenado(descripcion varchar(50))
+begin
+	insert into area_almacenado(descripcion, estado)  values (descripcion ,1 );
+end
+call insert_area_almacenado("Refrigeracion")
+select * from area_almacenado;
+
+#update
+drop procedure if exists update_area_almacenado;
+create or replace procedure update_area_almacenado ( in id_almacenado_p int(11), descripcion varchar(50))
+begin 
+	update area_almacenado  set descripcion = descripcion where id_almacenado  = id_almacenado_p;
+end
+call update_area_almacenado(2,"Al Ambiente")
+
+#delete
+create or replace procedure delete_area_almacenado(id_almacenado_p int(11))
+begin 
+	update area_almacenado set estado =0 where id_almacenado = id_almacenado_p;
+end
+call delete_area_almacenado (2)
+
+#select
+drop procedure if exists select_area_almacenado;
+create or replace procedure select_area_almacenado(id_almacenado_p int)
+begin
+select * from area_almacenado where id_almacenado = id_almacenado_p;
+end
+call select_area_almacenado (1)
 
 
 -- AREA ALAMACENADO PRODUCTO ==================================================
+#insert
+drop  procedure insert_area_almacenado_producto
+create procedure insert_area_almacenado_producto(fk_cata_prod int(11), fk_area_alma int(11))
+begin
+	insert into area_almacenado_producto(fk_cata_prod, fk_area_alma, estado)  values (fk_cata_prod, fk_area_alma, 1);
+end
+call insert_area_almacenado_producto(2,2)
+select * from area_almacenado_producto;
+
+#update
+drop procedure if exists update_area_almacenado_producto
+create or replace procedure update_area_almacenado_producto (in id_alma_pro int(11), fk_cata_prod int(11), fk_area_alma int(11))
+begin 
+	update area_almacenado_producto  set fk_cata_prod = fk_cata_prod , fk_area_alma = fk_area_alma where id_alma_prod  = id_alma_pro;
+end
+call update_area_almacenado_producto(4,1,1)
+
+#delete
+drop procedure if exists delete_area_almacenado_producto;
+create or replace procedure delete_area_almacenado_producto(id_alma_pro int(11))
+begin 
+	update area_almacenado_producto  set estado =0 where id_alma_prod = id_alma_pro;
+end
+call delete_area_almacenado_producto (4)
+
+#select
+drop procedure if exists select_area_almacenado_producto;
+create or replace procedure select_area_almacenado_producto(id_alma_pro int)
+begin
+select * from area_almacenado_producto where id_alma_prod  = id_alma_pro;
+end
+call select_area_almacenado_producto (2)
+
+-- END ERICK =================================================
 
 
 -- PRESENTACION CATALOGO PRODUCTO ==================================================
 -- insertar
 drop  procedure insert_presentacion_catalogo_producto 
-create procedure insert_presentacion_catalogo_producto (id_pres_cata_prod integer,fk_cata_prod int, fk_sub_cate int, cantidad double, fk_uni_prod int, estado int)
+create procedure insert_presentacion_catalogo_producto (fk_cata_prod int, fk_sub_cate int, cantidad double, fk_uni_prod int, estado int)
 begin
-	insert into presentacion_catalogo_producto values (id_pres_cata_prod, fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, 1);
+	insert into presentacion_catalogo_producto (fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, estado) values (fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, 1);
 end
-call insert_presentacion_catalogo_producto(7,5,1,2,1,1)
+call insert_presentacion_catalogo_producto(5,1,2,1,1)
 
 select * from presentacion_catalogo_producto pcp
 
-
-delimiter //
+-- update
 drop procedure if exists update_presentacion_catalogo_producto
-create procedure update_presentacion_catalogo_producto ( in cata_prod int(11), sub_cate int(11), cantidad double, uni_prod int(11), estado int, pres_cata_pro int(11))
+create procedure update_presentacion_catalogo_producto ( in id_pres_cata_pro int(11), cata_prod int(11), sub_cate int(11), cantidad double, uni_prod int(11))
 begin 
-	update presentacion_catalogo_producto  set fk_cata_prod = cata_prod, fk_sub_cate = sub_cate, cantidad = cantidad, fk_unid_prod = uni_prod, estado = estado where id_pres_cata_prod  = pres_cata_pro;
+	update presentacion_catalogo_producto  set fk_cata_prod = cata_prod, fk_sub_cate = sub_cate, cantidad = cantidad, fk_unid_prod = uni_prod where id_pres_cata_prod  = id_pres_cata_pro;
 end
-delimiter
-call update_presentacion_catalogo_producto(5,1,2,1,1,7)
+call update_presentacion_catalogo_producto(1,5,1,2,1)
 
-
-delimiter //
-create procedure delete_presentacion_catalogo_producto(pres_cata_pro int(11))
+-- delete 
+create procedure delete_presentacion_catalogo_producto(id_pres_cata_pro int(11))
 begin 
-	delete from presentacion_catalogo_producto where id_pres_cata_prod = pres_cata_pro ;
-
+	update presentacion_catalogo_producto set estado = 0 where id_pres_cata_prod = id_pres_cata_pro;
 end
-delimiter
+call delete_presentacion_catalogo_producto  (1)
 
-call delete_presentacion_catalogo_producto  (7)
+-- select
+drop procedure if exists select_presentacion_catalogo_producto;
+create procedure select_presentacion_catalogo_producto(id_alma_pro int)
+begin
+select * from presentacion_catalogo_producto where id_alma_prod = id_alma_pro;
+end
+call select_presentacion_catalogo_producto (2)
 
---- PRECIO CATALOGO PRODUCTO ==================================================
+-- PRECIO CATALOGO PRODUCTO ==================================================
+-- insert 
+drop procedure if exists insert_precio_catalogo_producto;
+create or replace procedure insert_precio_catalogo_producto (fk_pres_cata_prod int, fk_unid_prod int, precio double(10,2))
+begin 
+	insert into precio_catalogo_producto (fk_pres_cata_prod, fk_unid_prod, precio, estado) values (fk_pres_cata_prod, fk_unid_prod, precio, 1);
+end
+call insert_precio_catalogo_producto ()
+
+-- update
+drop procedure if exists update_precio_catalogo_producto;
+create or replace procedure update_precio_catalogo_producto (in id_prec_cata_pro int, fk_pres_cata_prod int, fk_unid_prod int, precio double(10,2))
+begin 
+	update precio_catalogo_producto set fk_pres_cata_prod = fk_pres_cata_prod, fk_unid_prod = fk_unid_prod, precio = precio where id_prec_cata_prod = id_prec_cata_pro; 
+end 
+call update_precio_catalogo_producto ()
+
+-- delete 
+drop procedure if exists delete_precio_catalogo_producto;
+create or replace procedure delete_precio_catalogo_producto (in id_prec_cata_pro int)
+begin 
+	update precio_catalogo_producto set estado =0 where id_prec_cata_prod = id_prec_cata_pro;
+end
+call delete_precio_catalogo_producto ()
+
+ -- select 
+drop procedure if exists select_precio_catalogo_producto;
+create procedure select_precio_catalogo_producto(id_prec_cata_pro int)
+begin
+select * from precio_catalogo_producto  where id_prec_cata_prod = id_prec_cata_pro;
+end
+call select_precio_catalogo_producto(2)
 
 
 -- CLIENTE ==================================================
@@ -181,7 +310,7 @@ call insert_cliente('0954943114','Efren Galarza','0997188086');
  * Argumentos: id_cliente, cedula, nombre, contacto
  */
 drop procedure if exists update_cliente;
-create or replace procedure update_cliente  ( in id_client int, cedula varchar(11), nombre varchar(50), contacto varchar(50))
+create or replace procedure update_cliente ( in id_client int, cedula varchar(11), nombre varchar(50), contacto varchar(50))
 begin 
 	update cliente set cedula=cedula, nombre=nombre, contacto=contacto where id_cliente=id_client  ;    
 end
@@ -276,7 +405,7 @@ call update_detalle_pedido(1, 1, 1);
 
 /** 
  * Tabla: det_pedido
- * Funcion: actualiza datos
+ * Funcion: Realiza borrado logico
  * Argumentos: id_det_pedido
  */
 drop procedure if exists delete_detalle_pedido;
@@ -287,17 +416,19 @@ end
 -- Ejemplo:
 call delete_detalle_pedido(1);
 
+ 
+
 
 -- CABECERA FACTURA ==================================================
+-- insert
 drop procedure if exists insert_cabecera_factura;
 create or replace procedure insert_cabecera_factura (in fk_cab_pedido int)
 begin
 	insert into cab_factura(fk_cab_pedido, sub_total, total, estado) values (fk_cab_pedido, 0, 0, 1);
 end
-
 call insert_cabecera_factura(1);
 
-
+-- update
 drop procedure if exists update_cabecera_factura;
 create or replace procedure update_cabecera_factura (in fk_cab_pedido int, sub_total  decimal(12, 2), total  decimal(12, 2), id_cab_factura int)
 begin
@@ -307,10 +438,9 @@ begin
 		total=total 
 	where id_cab_factura = id_cab_factura ;
 end
-
 call update_cabecera_factura(1, 10, 10, 1);
 
-
+-- delete
 drop procedure if exists delete_cabecera_factura;
 create or replace procedure delete_cabecera_factura (in id_cab_factura int)
 begin
@@ -320,6 +450,14 @@ begin
 end
 
 call delete_cabecera_factura(1);
+
+-- select 
+drop procedure if exists select_cabecera_factura;
+create procedure select_cabecera_factura(id_cab_factura int)
+begin
+select * from cab_factura where id_cab_factura = id_cab_factura;
+end
+call select_cabecera_factura (1)
 
 
 -- DETALLE FACTURA ==================================================
