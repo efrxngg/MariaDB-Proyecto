@@ -18,7 +18,7 @@ select * from unidad_producto;
 
 
 -- CATALOGO PRODUCTO
-insert into catalogo_producto(descripcion, estado) values("Coca Cola",1), ("Cola Oro",1), ("Cola Gallito",1), ("Big Cola",1), ("Cola Limon",1), ("Cola Piña",1);
+insert into catalogo_producto(descripcion, estado) values("Coca Cola",1), ("Cola Oro",1), ("Cola Gallito",1), ("Big Cola",1), ("Cola Limon",1), ("Cola Piï¿½a",1);
 select * from catalogo_producto;
 
 
@@ -92,3 +92,4 @@ call insert_detalle_factura(3, 1, 2, 1);
 
 select * from det_factura df ;
 truncate table  det_factura;
+
