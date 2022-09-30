@@ -51,7 +51,7 @@ select*from sub_categorias
 #update
 create or replace  procedure update_sub_categoria (in id_sub_cat int(11),fk_categoria int(11) ,descripcion varchar(255),estado int)
 begin 
-update sub_categorias  set id_sub_cate=id_sub_cate ,fk_categoria=fk_categoria,descripcion=descripcion ,estado=estado  where  id_sub_cate=id_sub_cat ;
+update sub_categorias  set fk_categoria=fk_categoria,descripcion=descripcion ,estado=estado  where  id_sub_cate=id_sub_cat ;
 end
 call update_sub_categoria (2,1,'bebidas',1);
 select*from sub_categorias
@@ -105,9 +105,9 @@ select*from unidad_producto
 
 #select
 drop procedure if exists select_unidad_producto;
-CREATE PROCEDURE select_unidad_producto(id_unid_prod int)
+CREATE PROCEDURE select_unidad_producto(id_unid_pro int)
 BEGIN
-SELECT * FROM unidad_producto where id_unid_prod=id_unid_prod;
+SELECT * FROM unidad_producto where id_unid_prod=id_unid_pro;
 END
 call select_unidad_producto(1);
 select*from unidad_producto
@@ -279,6 +279,7 @@ begin
 end
 call delete_precio_catalogo_producto ()
 
+
  -- select 
 drop procedure if exists select_precio_catalogo_producto;
 create procedure select_precio_catalogo_producto(id_prec_cata_pro int)
@@ -323,9 +324,9 @@ call update_cliente(1,'9874058392', 'Efren Galarza', '0963849581');
  * Argumentos: id_cliente
  */
 drop procedure if exists delete_cliente;
-create or replace procedure delete_cliente(in id_cliente int)
+create or replace procedure delete_cliente(in id_client int)
 begin 
-	update cliente set estado = 0 where id_cliente=id_cliente; 
+	update cliente set estado = 0 where id_cliente=id_client; 
 end
 -- Ejemplo: 
 call delete_cliente(1);
@@ -352,9 +353,9 @@ call insert_cabecera_pedido(1);
  * Argumentos: id_cliente, id_cab_pedido
  */
 drop procedure if exists update_cabecera_pedido;
-create or replace procedure update_cabecera_pedido (in fk_cliente int, id_cab_pedido int)
+create or replace procedure update_cabecera_pedido (in fk_cliente int, id_cab_pedid int)
 begin
-	update cab_pedido set fk_cliente=fk_cliente where id_cab_pedido=id_cab_pedido;
+	update cab_pedido set fk_cliente=fk_cliente where id_cab_pedido=id_cab_pedid;
 end
 -- Ejemplo: 
 call update_cabecera_pedido(1, 1);
@@ -365,9 +366,9 @@ call update_cabecera_pedido(1, 1);
  * Argumentos: id_cab_pedido
  */
 drop procedure if exists delete_cabecera_pedido;
-create or replace procedure delete_cabecera_pedido (in id_cab_pedido int)
+create or replace procedure delete_cabecera_pedido (in id_cab_pedid int)
 begin
-	update cab_pedido set estado=0 where id_cab_pedido=id_cab_pedido;
+	update cab_pedido set estado=0 where id_cab_pedido=id_cab_pedid;
 end
 
 call delete_cabecera_pedido(1);
@@ -409,9 +410,9 @@ call update_detalle_pedido(1, 1, 1);
  * Argumentos: id_det_pedido
  */
 drop procedure if exists delete_detalle_pedido;
-create or replace procedure delete_detalle_pedido (in id_det_pedido int)
+create or replace procedure delete_detalle_pedido (in id_det_pedid int)
 begin
-	update det_pedido set estado=0 where id_det_pedido=id_det_pedido;
+	update det_pedido set estado=0 where id_det_pedido=id_det_pedid;
 end
 -- Ejemplo:
 call delete_detalle_pedido(1);
@@ -430,32 +431,31 @@ call insert_cabecera_factura(1);
 
 -- update
 drop procedure if exists update_cabecera_factura;
-create or replace procedure update_cabecera_factura (in fk_cab_pedido int, sub_total  decimal(12, 2), total  decimal(12, 2), id_cab_factura int)
+create or replace procedure update_cabecera_factura (in id_cab_factur int, sub_total  decimal(12, 2), total  decimal(12, 2))
 begin
 	update cab_factura set 
-		fk_cab_pedido=fk_cab_pedido , 
 		sub_total=sub_total, 
 		total=total 
-	where id_cab_factura = id_cab_factura ;
+	where id_cab_factura = id_cab_factur ;
 end
-call update_cabecera_factura(1, 10, 10, 1);
+call update_cabecera_factura(1, 10, 1);
 
 -- delete
 drop procedure if exists delete_cabecera_factura;
-create or replace procedure delete_cabecera_factura (in id_cab_factura int)
+create or replace procedure delete_cabecera_factura (in id_cab_factur int)
 begin
 	update cab_factura set 
 		estado = 0
-	where id_cab_factura = id_cab_factura ;
+	where id_cab_factura = id_cab_factur ;
 end
 
 call delete_cabecera_factura(1);
 
 -- select 
 drop procedure if exists select_cabecera_factura;
-create procedure select_cabecera_factura(id_cab_factura int)
+create procedure select_cabecera_factura(id_cab_factur int)
 begin
-select * from cab_factura where id_cab_factura = id_cab_factura;
+select * from cab_factura where id_cab_factura = id_cab_factur;
 end
 call select_cabecera_factura (1)
 
@@ -480,13 +480,13 @@ call insert_detalle_factura(1, 1, 2, 1);
  * Parametros: id_cab_factura
  */
 drop procedure if exists insert_detalles_factura;
-create or replace procedure insert_detalles_factura(in id_cab_factura int)
+create or replace procedure insert_detalles_factura(in id_cab_factur int)
 begin
 	declare var_producto integer;
 	declare var_cantidad integer;
 	declare var_total decimal(12,2);
 	declare var_final integer default 0;
-	declare var_id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factura);
+	declare var_id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factur);
 	
 	declare detalles_pedido cursor for 
 		select     
@@ -506,7 +506,7 @@ begin
 					leave bucle;			
 				end if;		
 			
-				call insert_detalle_factura (id_cab_factura, var_producto, var_cantidad, var_total);
+				call insert_detalle_factura (id_cab_factur, var_producto, var_cantidad, var_total);
 			
 		end loop bucle;
 	close detalles_pedido;
@@ -524,9 +524,9 @@ end
 
 
 drop procedure if exists delete_detalle_factura;
-create or replace procedure delete_detalle_factura(in id_det_factura int)
+create or replace procedure delete_detalle_factura(in id_det_factur int)
 begin
-	update det_factura set estado=0 where id_det_factura = id_det_factura ;
+	update det_factura set estado=0 where id_det_factura = id_det_factur ;
 end
 
 -- Ejemplo: 

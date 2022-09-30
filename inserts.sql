@@ -1,5 +1,5 @@
 -- INSERTS ========================================================================= 
-
+use proyectobd;
 -- CATEGORIA
 call insert_categoria('viveres');
 select * from categoria;
@@ -92,5 +92,5 @@ call insert_detalles_factura(3);
 call insert_detalle_factura(3, 1, 2, 1);
 
 select * from det_factura df ;
-truncate table  det_factura;
+truncate table  cab_factura;
 

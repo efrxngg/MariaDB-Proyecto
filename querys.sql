@@ -1,3 +1,4 @@
+use proyectobd;
 drop procedure if exists detalle_pedido_productos;
 create or replace procedure detalle_pedido_productos ( in id int)
 begin 
@@ -15,13 +16,13 @@ select df.fk_producto, df.cantidad, df.total  from det_factura as df inner join 
 
 
 -- COMPARACION 
-create or replace procedure update_change_detalle_factura(in id_cab_factura int)
+create or replace procedure update_change_detalle_factura(in id_cab_factur int)
 begin 
  	declare var_producto integer;
 	declare var_cantidad integer;
 	declare var_total decimal(12,2);
 	declare var_final integer default 0;
-	declare id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factura);
+	declare id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factur);
 	
 	declare new_detalles_factura cursor for 
 		select     
@@ -44,16 +45,16 @@ begin
 					leave bucle;			
 				end if;		
 			
-				if var_producto in (select fk_producto from det_factura where   fk_cab_factura = id_cab_factura) then
-					if var_cantidad != (select cantidad from det_factura where fk_cab_factura = id_cab_factura and fk_producto = var_producto) then
-						update det_factura set cantidad=var_cantidad, total=var_total, estado=1 where fk_producto = var_producto and fk_cab_factura = id_cab_factura;
+				if var_producto in (select fk_producto from det_factura where   fk_cab_factura = id_cab_factur) then
+					if var_cantidad != (select cantidad from det_factura where fk_cab_factura = id_cab_factur and fk_producto = var_producto) then
+						update det_factura set cantidad=var_cantidad, total=var_total, estado=1 where fk_producto = var_producto and fk_cab_factura = id_cab_factur;
 -- 						call update_detalle_factura(id_cab_factura, var_producto, var_cantidad, var_total);		
-					elseif var_cantidad = (select cantidad from det_factura where fk_cab_factura = id_cab_factura and fk_producto = var_producto) then
-						update det_factura set estado = 1 where fk_producto = var_producto and fk_cab_factura = id_cab_factura;
+					elseif var_cantidad = (select cantidad from det_factura where fk_cab_factura = id_cab_factur and fk_producto = var_producto) then
+						update det_factura set estado = 1 where fk_producto = var_producto and fk_cab_factura = id_cab_factur;
 					end if;
 				
 				else
-					call insert_detalle_factura(id_cab_factura, var_producto, var_cantidad, var_total);
+					call insert_detalle_factura(id_cab_factur, var_producto, var_cantidad, var_total);
 				
 				end if;
 			
@@ -85,13 +86,13 @@ end
 call delete_detalle_producto(1, 1);
 
 
-create or replace procedure delete_det_factura(in id_cab_factura int, id_producto int)
+create or replace procedure delete_det_factura(in id_cab_factur int, id_producto int)
 begin 
 	declare var_id_det_factura int;
 
 	select df.id_det_factura into var_id_det_factura from det_factura df 
-	inner join cab_factura cf on df.fk_cab_factura = cf.id_cab_factura 
-	where cf.id_cab_factura = id_cab_factura and df.fk_producto = id_producto;	
+	inner join cab_factura cf on df.fk_cab_factura = cf.id_cab_factur 
+	where cf.id_cab_factura = id_cab_factur and df.fk_producto = id_producto;	
 
 	update det_factura set estado = 0 where id_det_factura = var_id_det_factura;
 end
@@ -103,6 +104,18 @@ begin
 	call delete_detalle_producto(id_cab_factura, id_producto);
 end
 
-call delete_det_fac_and_delete_det_pedido(1, 2);
+call delete_det_fac_and_delete_det_pedido(1, 1);
 
 
+create or replace procedure update_final_cab_factura (in id_cab_factura int)
+begin 
+	declare sub_total decimal(12,2);
+	declare total_final decimal(12,2);
+	select sum (total) into sub_total from det_factura where fk_cab_factura = id_cab_factura;
+	select  ((sum (total)*0.12)+sum (total)) into total_final from det_factura where fk_cab_factura = id_cab_factura;
+	call update_cabecera_factura(id_cab_factura, sub_total, total_final);
+
+end
+
+call update_final_cab_factura (1)
+select * from cab_factura cf ;

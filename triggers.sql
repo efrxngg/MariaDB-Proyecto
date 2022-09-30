@@ -1,6 +1,7 @@
 #triggers o Disparadores
 use proyectobd;
 
+
 -- categoria ====================
 drop trigger if exists on_insert_categoria;
 create or replace trigger on_insert_categoria after update on categoria
@@ -210,7 +211,7 @@ create or replace trigger on_insert_det_pedido after update on det_pedido
 for each row
 begin 
 	insert into det_pedido_auditoria (id_det_pedido, fk_cb_factura, fk_producto, estado, accion, usuario)
-	values (new.id_det_pedido, new.fk_cb_factura, new.fk_producto, new.estado, "insert", user());
+	values (new.id_det_pedido, new.fk_cab_pedido, new.fk_producto, new.estado, "insert", user());
 end
 -- 
 drop trigger if exists on_update_det_pedido;
@@ -218,7 +219,7 @@ create or replace trigger on_update_det_pedido before update on det_pedido
 for each row 
 begin 
 	insert into det_pedido_auditoria (id_det_pedido, fk_cb_factura, fk_producto, estado, accion, usuario)
-	values (old.id_det_pedido, old.fk_cb_factura, old.fk_producto, old.estado, "update", user());
+	values (old.id_det_pedido, old.fk_cab_pedido, old.fk_producto, old.estado, "update", user());
 end
 -- 
 drop trigger if exists on_delete_det_pedido;
@@ -226,7 +227,7 @@ create or replace trigger on_delete_det_pedido before update on det_pedido
 for each row 
 begin 
 	insert into det_pedido_auditoria (id_det_pedido, fk_cb_factura, fk_producto, estado, accion, usuario)
-	values (old.id_det_pedido, old.fk_cb_factura, old.fk_producto, old.estado, "delete", user());
+	values (old.id_det_pedido, old.fk_cab_pedido, old.fk_producto, old.estado, "delete", user());
 end
 
 -- det_factura =============================================
@@ -235,7 +236,7 @@ create or replace trigger on_insert_det_factura after update on det_factura
 for each row
 begin 
 	insert into det_factura_auditoria (id_det_factura, fk_cb_factura, fk_producto, cantidad, total, estado, accion, usuario)
-	values (new.id_det_factura, new.fk_cb_factura, new.fk_producto, new.cantidad, new.total,  new.estado, "insert", user());
+	values (new.id_det_factura, new.fk_cab_factura, new.fk_producto, new.cantidad, new.total,  new.estado, "insert", user());
 end
 -- 
 drop trigger if exists on_update_det_factura;
@@ -243,7 +244,7 @@ create or replace trigger on_update_det_factura before update on det_factura
 for each row 
 begin 
 	insert into det_factura_auditoria (id_det_factura, fk_cb_factura, fk_producto, cantidad, total, estado, accion, usuario)
-	values (old.id_det_factura, old.fk_cb_factura, old.fk_producto, old.cantidad, old.total,  old.estado, "update", user());
+	values (old.id_det_factura, old.fk_cab_factura, old.fk_producto, old.cantidad, old.total,  old.estado, "update", user());
 end
 -- 
 drop trigger if exists on_delete_det_factura;
@@ -251,7 +252,7 @@ create or replace trigger on_delete_det_factura before update on det_factura
 for each row 
 begin 
 	insert into det_factura_auditoria (id_det_factura, fk_cb_factura, fk_producto, cantidad, total, estado, accion, usuario)
-	values (old.id_det_factura, old.fk_cb_factura, old.fk_producto, old.cantidad, old.total,  old.estado, "delete", user());
+	values (old.id_det_factura, old.fk_cab_factura, old.fk_producto, old.cantidad, old.total,  old.estado, "delete", user());
 end
 
 -- cab_pedido ============================================
@@ -305,6 +306,7 @@ begin
 end
 
 -- Cliente ===============================
+
 drop trigger if exists on_insert_cliente_auditoria;
 create or replace trigger on_insert_cliente_auditoria after update on cliente
 for each row 
@@ -330,6 +332,3 @@ begin
 	insert into cliente_auditoria(id_cliente, cedula, nombre, contacto, estado, accion, usuario)
 	values (old.id_cliente, old.cedula, old.nombre, old.contacto, old.estado, "delete", user());
 end
-
-
-
