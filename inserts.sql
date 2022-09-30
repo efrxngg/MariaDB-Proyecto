@@ -38,8 +38,7 @@ select * from presentacion_catalogo_producto;
 
 
 -- PRECIO CATALOGO PRODUCTO
-insert into precio_catalogo_producto(fk_pres_cata_prod, fk_unid_prod, precio, estado) 
-values(1, 1, 0.5,1), (2, 1, 2,1), (3, 1, 0.5,1), (4, 1, 2,1), (5, 1, 0.5,1), (6, 1, 2,1);
+insert into precio_catalogo_producto(fk_pres_cata_prod, fk_unid_prod, precio, estado) values(1, 1, 0.5,1), (2, 1, 2,1), (3, 1, 0.5,1), (4, 1, 2,1), (5, 1, 0.5,1), (6, 1, 2,1);
 select * from precio_catalogo_producto;
 
 
@@ -82,15 +81,19 @@ select * from det_pedido;
 call insert_cabecera_factura(1);
 call insert_cabecera_factura(2);
 call insert_cabecera_factura(3);
+
 select * from cab_factura;
 
 
 -- DETALLE FACTURA
-call insert_detalles_factura(1);
-call insert_detalles_factura(2);
-call insert_detalles_factura(3);
-call insert_detalle_factura(3, 1, 2, 1);
+call update_change_detalle_factura(1);
+call update_change_detalle_factura(2);
+call update_change_detalle_factura(3);
+
+call update_final_cab_factura (1);
 
 select * from det_factura df ;
 truncate table  cab_factura;
+
+
 

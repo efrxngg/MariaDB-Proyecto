@@ -1,0 +1,30 @@
+Flujo de ejecucion : Insercion Directa
+
+1.- Insertamos cabecera de pedido mediante el id del cliente
+        insert_cabecera_pedido(id_cliente)
+
+2.- Insertamos el detalle del pedido mediante el id de cabecera pedido y el id de la tabla precio catalogo producto
+        insert_detalle_pedido(id_cab_pedido, id_precio_catalogo_producto)
+
+3.- Insertamos la cabecera de factura mediente el id de cabecera pedido
+        insert_cabecera_factura(id_cab_pedido)
+
+4.- Insertamos los detalles de factura mediante el id de la cabecera de factura
+        insert_detalles_factura(id_cab_factura)
+
+5.- Modificamos la cabecera de factura añadiendole el sub total y el total 
+        update_final_cab_factura(id_cab_factura)
+
+
+Flujo ejecucion: Modificaciones
+Suma Producto:
+    1.- Ingresar nuevos productos al detalle de pedido
+            insert_detalle_pedido(id_cab_pedido, id_precio_catalogo_producto)        
+
+Resta Producto:
+    1.- Eliminar productos del detalle de pedido y del detalle de factura
+            delete_det_fac_and_delete_det_pedido(id_cab_factura, id_precio_catalogo_producto)
+
+Actualizar Cambios :
+    update_change_detalle_factura(id_cab_factura)
+
