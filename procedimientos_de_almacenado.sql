@@ -42,6 +42,14 @@ call select_categoria(1);
 
 
 -- SUB CATEGORIA ==================================================
+create or replace procedure select_sub_categoria()
+begin 
+	select sc.id_sub_cate, c.descripcion, sc.descripcion, sc.estado  
+from sub_categorias sc inner join categoria c on sc.fk_categoria = c.id_cate 
+order by sc.id_sub_cate asc ;
+end
+
+
 #insert
 create or replace procedure insert_sub_categoria (fk_categoria int(11) ,descripcion varchar(255))
 begin 
@@ -203,6 +211,14 @@ call select_area_almacenado (1);
 
 
 -- AREA ALAMACENADO PRODUCTO ==================================================
+create or replace procedure select_area_alma_producto()
+begin 
+	select aap.id_alma_prod, cp.descripcion, aa.descripcion, aap.estado from area_almacenado_producto aap 
+	inner join catalogo_producto cp on aap.fk_cata_prod = cp.id_cata_prod 
+	inner join area_almacenado aa on aap.fk_area_alma = aa.id_almacenado ;
+end
+
+
 #insert
 drop  procedure insert_area_almacenado_producto
 create procedure insert_area_almacenado_producto(fk_cata_prod int(11), fk_area_alma int(11))
@@ -404,7 +420,7 @@ call delete_cliente(1);
 create or replace procedure select_cab_pedido()
 begin 
 	select 
-		cp.id_cab_pedido as "#",  
+		cp.id_cab_pedido as "Id",  
 		c.nombre as "Nombre",
 		cp.estado as "status"
 	from cab_pedido cp inner join cliente c on cp.fk_cliente = c.id_cliente ;
@@ -456,17 +472,18 @@ call delete_cabecera_pedido(1);
 create or replace procedure select_detalle_pedido()
 begin 
 	select 
-		dp.id_det_pedido, 
-		cp.id_cab_pedido,
-		cp2.descripcion, 
-		dp.estado 
+		dp.id_det_pedido as "#", 
+		cp.id_cab_pedido as "Cab Ped",
+		cp2.descripcion as "Producto", 
+		count (dp.fk_producto) as "Cant", 
+		dp.estado as "estado"
 	from det_pedido dp 
 	inner join cab_pedido cp on dp.fk_cab_pedido = cp.id_cab_pedido 
 	inner join precio_catalogo_producto pcp on dp.fk_producto = pcp.id_prec_cata_prod 
 	inner join presentacion_catalogo_producto pcp2 on pcp.fk_pres_cata_prod = pcp2.id_pres_cata_prod 
-	inner join catalogo_producto cp2 on pcp2.fk_cata_prod = cp2.id_cata_prod ;
+	inner join catalogo_producto cp2 on pcp2.fk_cata_prod = cp2.id_cata_prod group by dp.fk_producto  ;
 end
-
+ 
 
 /**
  * Tabla: det_pedido
@@ -591,15 +608,6 @@ end
 
 call delete_cabecera_factura(1);
 
--- select 
-drop procedure if exists select_cabecera_factura;
-create procedure select_cabecera_factura(id_cab_factur int)
-begin
-select * from cab_factura where id_cab_factura = id_cab_factur;
-end
--- Ejemplo:
-call select_cabecera_factura (1);
-
 
 /*
  * Tabla: cab_factura
@@ -610,8 +618,8 @@ create or replace procedure update_final_cab_factura (in id_cab_factura int)
 begin 
 	declare sub_total decimal(12,2);
 	declare total_final decimal(12,2);
-	select sum (total) into sub_total from det_factura where fk_cab_factura = id_cab_factura;
-	select  ((sum (total)*0.12)+sum (total)) into total_final from det_factura where fk_cab_factura = id_cab_factura;
+	select sum (total) into sub_total from det_factura where fk_cab_factura = id_cab_factura and estado = 1;
+	select  ((sum (total)*0.12)+sum (total)) into total_final from det_factura where fk_cab_factura = id_cab_factura and estado = 1;
 	call update_cabecera_factura(id_cab_factura, sub_total, total_final);
 
 end
@@ -660,46 +668,6 @@ call insert_detalle_factura(1, 1, 2, 1);
 
 
 /* Tabla: det_factura
- * Funcion: insertar los productos a una factura
- * Parametros: id_cab_factura
- */
-drop procedure if exists insert_detalles_factura;
-create or replace procedure insert_detalles_factura(in id_cab_factur int)
-begin
-	declare var_producto integer;
-	declare var_cantidad integer;
-	declare var_total decimal(12,2);
-	declare var_final integer default 0;
-	declare var_id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factur);
-	
-	declare detalles_pedido cursor for 
-		select     
-			dp.fk_producto  as producto , 
-			count (dp.fk_producto) as cantidad,  
-			(count (dp.fk_producto)* pcp.precio ) as total 
-		from det_pedido as dp
-			inner join precio_catalogo_producto as pcp on dp.fk_producto = pcp.id_prec_cata_prod  where dp.fk_cab_pedido = var_id_cab_pedido
-			group by dp.fk_producto;
-	
-	declare continue handler for not found set var_final = 1;
-
-	open detalles_pedido;
-		bucle: loop
-			fetch detalles_pedido into var_producto, var_cantidad, var_total;
-				if var_final = 1 then
-					leave bucle;			
-				end if;		
-			
-				call insert_detalle_factura (id_cab_factur, var_producto, var_cantidad, var_total);
-			
-		end loop bucle;
-	close detalles_pedido;
-end
-
-call insert_detalles_factura();
-
-
-/* Tabla: det_factura
  * Funcion: recolecta los productos del detalle de pedido y los coloca en el det de factura
  * Parametros: id_cab_factura 
  * 
@@ -710,6 +678,7 @@ begin
  	declare var_producto integer;
 	declare var_cantidad integer;
 	declare var_total decimal(12,2);
+	declare var_estado integer;
 	declare var_final integer default 0;
 	declare id_cab_pedido int default (select fk_cab_pedido from cab_factura as cf where cf.id_cab_factura=id_cab_factur);
 	
@@ -717,7 +686,8 @@ begin
 		select     
 			dp.fk_producto  as producto , 
 			count (dp.fk_producto) as cantidad,  
-			(count (dp.fk_producto)* pcp.precio ) as total 
+			(count (dp.fk_producto)* pcp.precio ) as total ,
+			dp.estado as estado
 		from det_pedido as dp
 			inner join precio_catalogo_producto as pcp on dp.fk_producto = pcp.id_prec_cata_prod  
 			where dp.fk_cab_pedido = id_cab_pedido and dp.estado = 1
@@ -729,7 +699,7 @@ begin
 	open new_detalles_factura;
 
 		bucle: loop
-			fetch new_detalles_factura into var_producto, var_cantidad, var_total;
+			fetch new_detalles_factura into var_producto, var_cantidad, var_total, var_estado;
 				if var_final = 1 then
 					leave bucle;			
 				end if;		
@@ -739,7 +709,9 @@ begin
 						update det_factura set cantidad=var_cantidad, total=var_total, estado=1 where fk_producto = var_producto and fk_cab_factura = id_cab_factur;
 -- 						call update_detalle_factura(id_cab_factura, var_producto, var_cantidad, var_total);		
 					elseif var_cantidad = (select cantidad from det_factura where fk_cab_factura = id_cab_factur and fk_producto = var_producto) then
-						update det_factura set estado = 1 where fk_producto = var_producto and fk_cab_factura = id_cab_factur;
+						if var_estado != (select estado from det_factura where fk_cab_factura = id_cab_factur and fk_producto = var_producto) then
+							update det_factura set estado = 1 where fk_producto = var_producto and fk_cab_factura = id_cab_factur;
+						end if;
 					end if;
 				
 				else
@@ -784,7 +756,7 @@ begin
 	declare var_id_det_factura int;
 
 	select df.id_det_factura into var_id_det_factura from det_factura df 
-	inner join cab_factura cf on df.fk_cab_factura = cf.id_cab_factur 
+	inner join cab_factura cf on df.fk_cab_factura = cf.id_cab_factura 
 	where cf.id_cab_factura = id_cab_factur and df.fk_producto = id_producto;	
 
 	update det_factura set estado = 0 where id_det_factura = var_id_det_factura;
