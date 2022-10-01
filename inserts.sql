@@ -1,62 +1,86 @@
 -- INSERTS ========================================================================= 
 use proyectobd;
--- CATEGORIA
+-- CATEGORIA: descripcion
 call insert_categoria('viveres');
 select * from categoria;
 
 
--- SUB CATEGORIA
+-- SUB CATEGORIA: id_categoria, descripcion
 call insert_sub_categoria ( 1,'jugos');
 select * from sub_categorias;
 
 
--- UNIDAD PRODUCTO
+-- UNIDAD PRODUCTO: sigla, descripcion
 call insert_unidad_producto('UD','Unidad');
 call insert_unidad_producto('L','Litros');
 call insert_unidad_producto('ML','Mililitros');
 select * from unidad_producto;
 
 
--- CATALOGO PRODUCTO
-insert into catalogo_producto(descripcion, estado) values("Coca Cola",1), ("Cola Oro",1), ("Cola Gallito",1), ("Big Cola",1), ("Cola Limon",1), ("Cola Piï¿½a",1);
-select * from catalogo_producto;
+-- CATALOGO PRODUCTO: descripcion
+call insert_catalogo_producto("Coca Cola");
+call insert_catalogo_producto("Cola Oro");
+call insert_catalogo_producto("Cola Gallito");
+call insert_catalogo_producto("Big Cola");
+call insert_catalogo_producto("Cola Limon");
+call insert_catalogo_producto("Cola Piña");
+
+call select_catalogo_producto();
 
 
--- AREA ALMACENADO
-insert into area_almacenado(descripcion, estado) values("ambiente",1);
+-- AREA ALMACENADO: descripcion
+call insert_area_almacenado("ambiente");
 select * from area_almacenado;
 
 
--- AREA ALMACENADO PRODUCTO
-insert into area_almacenado_producto(fk_cata_prod, fk_area_alma, estado) values(1, 1,1), (2, 1,1), (3, 1,1), (4, 1,1), (5, 1,1), (6, 1,1);
+-- AREA ALMACENADO PRODUCTO: id_cata_prod, id_area_alma
+call insert_area_almacenado_producto(1, 1);
+call insert_area_almacenado_producto(2, 1);
+call insert_area_almacenado_producto(3, 1);
+call insert_area_almacenado_producto(4, 1);
+call insert_area_almacenado_producto(5, 1);
+call insert_area_almacenado_producto(6, 1);
+
 select * from area_almacenado_producto;
 
 
--- PRESENTACION CATALOGO PRODUCTO
-insert into presentacion_catalogo_producto(fk_cata_prod, fk_sub_cate, cantidad, fk_unid_prod, estado) values(1, 1, 300, 3,1), (2, 1, 1, 2,1), (3, 1, 300, 3,1), (4, 1, 1, 2,1), (5, 1, 300, 3,1), (6, 1, 1, 2,1);
-select * from presentacion_catalogo_producto;
+-- PRESENTACION CATALOGO PRODUCTO: id_cata_prod, sub_cate, cantidad, id_unidad
+call insert_presentacion_catalogo_producto(1, 1, 300, 3);
+call insert_presentacion_catalogo_producto(2, 1, 1, 2);
+call insert_presentacion_catalogo_producto(3, 1, 300, 3);
+call insert_presentacion_catalogo_producto(4, 1, 1, 2);
+call insert_presentacion_catalogo_producto(5, 1, 300, 3);
+call insert_presentacion_catalogo_producto(6, 1, 1, 2);
+
+call select_presentacion_catalogo_producto();
 
 
--- PRECIO CATALOGO PRODUCTO
-insert into precio_catalogo_producto(fk_pres_cata_prod, fk_unid_prod, precio, estado) values(1, 1, 0.5,1), (2, 1, 2,1), (3, 1, 0.5,1), (4, 1, 2,1), (5, 1, 0.5,1), (6, 1, 2,1);
-select * from precio_catalogo_producto;
+-- PRECIO CATALOGO PRODUCTO: id_presentacion_cata_prod, id_unid, precio
+call insert_precio_catalogo_producto(1, 1, 0.5);
+call insert_precio_catalogo_producto(2, 1, 2);
+call insert_precio_catalogo_producto(3, 1, 0.5);
+call insert_precio_catalogo_producto(4, 1, 2);
+call insert_precio_catalogo_producto(5, 1, 0.5);
+call insert_precio_catalogo_producto(6, 1, 2);
 
+call select_precio_catalogo_producto();
 
--- CLIENTE 
+-- CLIENTE: cedula, nombre, numero
 call insert_cliente('0954943114','Efren Galarza','0997188086');
 call insert_cliente('0954943116','Perro Negro','0997188087');
 call insert_cliente('0954943118','Giapierre Novillo','0997188089');
-select * from cliente;
+
+call select_cliente();
 
 
--- CABECERA PEDIDO
+-- CABECERA PEDIDO : id_cliente
 call insert_cabecera_pedido(1);
 call insert_cabecera_pedido(2);
 call insert_cabecera_pedido(3);
-select * from cab_pedido;
 
+call select_cab_pedido();
 
--- DETALLE PEDIDO : id_cab_pedido, id_producto
+-- DETALLE PEDIDO : id_cab_pedido, id_precio_cata_prod
 call insert_detalle_pedido(1, 1);
 call insert_detalle_pedido(1, 2);
 call insert_detalle_pedido(1, 3);
@@ -73,27 +97,26 @@ call insert_detalle_pedido(3, 2);
 call insert_detalle_pedido(3, 3);
 call insert_detalle_pedido(3, 3);
 
+call select_detalle_pedido();
 
-select * from det_pedido;
 
-
--- CABECERA FACTURA
+-- CABECERA FACTURA: id_cab_pedido
 call insert_cabecera_factura(1);
 call insert_cabecera_factura(2);
 call insert_cabecera_factura(3);
 
-select * from cab_factura;
+call select_cab_factura(1);
 
 
--- DETALLE FACTURA
+
+-- DETALLE FACTURA: id_cab_factura
 call update_change_detalle_factura(1);
 call update_change_detalle_factura(2);
 call update_change_detalle_factura(3);
 
+call select_detalle_factura(1); 
+
+
+-- Cerrar Factura: id_cab_factura
 call update_final_cab_factura (1);
-
-select * from det_factura df ;
-truncate table  cab_factura;
-
-
 

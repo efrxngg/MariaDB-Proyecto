@@ -124,6 +124,10 @@ select*from unidad_producto;
 
 -- START ERICK
 -- CATALOGO PRODUCTO ==================================================
+create or replace procedure select_catalogo_producto()
+begin 
+	select * from catalogo_producto;	
+end
 #insert
 drop procedure if exists insert_catalogo_producto;
 create or replace procedure insert_catalogo_producto(descripcion varchar(50))
@@ -240,11 +244,26 @@ call select_area_almacenado_producto (2);
 
 
 -- PRESENTACION CATALOGO PRODUCTO ==================================================
+create or replace procedure select_presentacion_catalogo_producto()
+begin 
+	select 
+		pcp.id_pres_cata_prod as "#",
+		cp.descripcion as "Producto",
+		sc.descripcion as "Sub Categoria",
+		pcp.cantidad as "Cant",
+		up.sigla  as "Sigla"	
+	from presentacion_catalogo_producto pcp 
+	inner join catalogo_producto cp on pcp.fk_cata_prod = cp.id_cata_prod 
+	inner join sub_categorias sc on pcp.fk_sub_cate = sc.id_sub_cate 
+	inner join unidad_producto up on pcp.fk_unid_prod = up.id_unid_prod order by pcp.id_pres_cata_prod asc;
+
+end
+
 -- insertar
 drop  procedure insert_presentacion_catalogo_producto; 
-create procedure insert_presentacion_catalogo_producto (fk_cata_prod int, fk_sub_cate int, cantidad double, fk_uni_prod int, estado int)
+create or replace procedure insert_presentacion_catalogo_producto (fk_cata_prod int, fk_sub_cate int, cantidad double, fk_uni_prod int)
 begin
-	insert into presentacion_catalogo_producto (fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, estado) values (fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, 1);
+	insert into presentacion_catalogo_producto (fk_cata_prod, fk_sub_cate, cantidad, fk_unid_prod, estado) values (fk_cata_prod, fk_sub_cate, cantidad, fk_uni_prod, 1);
 end
 
 call insert_presentacion_catalogo_producto(5,1,2,1,1);
@@ -278,6 +297,20 @@ end
 call select_presentacion_catalogo_producto (2);
 
 -- PRECIO CATALOGO PRODUCTO ==================================================
+create or replace procedure select_precio_catalogo_producto()
+begin 
+	select 
+		pcp.id_prec_cata_prod as "#",
+		concat(cp.descripcion, " ",pcp2.cantidad, up.sigla) as "Producto", 
+		up2.sigla as "Sigla",
+		pcp.precio as "Precio"
+	from precio_catalogo_producto pcp 
+	inner join presentacion_catalogo_producto pcp2 on pcp.fk_pres_cata_prod = pcp2.id_pres_cata_prod 
+	inner join catalogo_producto cp on pcp2.fk_cata_prod = cp.id_cata_prod  
+	inner join unidad_producto up on pcp2.fk_unid_prod = up.id_unid_prod
+	inner join unidad_producto up2 on pcp.fk_unid_prod = up2.id_unid_prod;
+ end
+
 -- insert 
 drop procedure if exists insert_precio_catalogo_producto;
 create or replace procedure insert_precio_catalogo_producto (fk_pres_cata_prod int, fk_unid_prod int, precio double(10,2))
@@ -317,6 +350,12 @@ call select_precio_catalogo_producto(2);
 
 
 -- CLIENTE ==================================================
+create or replace procedure select_cliente()
+begin 
+	select * from cliente;
+end
+
+
 /**
  * Tabla: cliente
  * Funcion: Inserta registros
@@ -361,6 +400,17 @@ call delete_cliente(1);
 
 
 -- CABECERA PEDIDO ==================================================
+
+create or replace procedure select_cab_pedido()
+begin 
+	select 
+		cp.id_cab_pedido as "#",  
+		c.nombre as "Nombre",
+		cp.estado as "status"
+	from cab_pedido cp inner join cliente c on cp.fk_cliente = c.id_cliente ;
+end
+
+
 /**
  * Tabla: cab_pedido
  * Funcion: Insertar Registros
@@ -403,6 +453,21 @@ call delete_cabecera_pedido(1);
 
 
 -- DETALLE PEDIDO ==================================================
+create or replace procedure select_detalle_pedido()
+begin 
+	select 
+		dp.id_det_pedido, 
+		cp.id_cab_pedido,
+		cp2.descripcion, 
+		dp.estado 
+	from det_pedido dp 
+	inner join cab_pedido cp on dp.fk_cab_pedido = cp.id_cab_pedido 
+	inner join precio_catalogo_producto pcp on dp.fk_producto = pcp.id_prec_cata_prod 
+	inner join presentacion_catalogo_producto pcp2 on pcp.fk_pres_cata_prod = pcp2.id_pres_cata_prod 
+	inner join catalogo_producto cp2 on pcp2.fk_cata_prod = cp2.id_cata_prod ;
+end
+
+
 /**
  * Tabla: det_pedido
  * Funcion: Inserta registros
@@ -741,6 +806,4 @@ begin
 end
 -- Ejemplo:
 call delete_det_fac_and_delete_det_pedido(1, 1);
-
-
 
